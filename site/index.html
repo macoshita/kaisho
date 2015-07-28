@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <title>楷書体</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <style>
+    body {
+      background: url('bg.png');
+      margin: 0 auto;
+    }
+    input, button {
+      font-size: 16px;
+    }
+    #content {
+      max-width: 450px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form {
+      margin-bottom: 20px;
+    }
+    #loading {
+      display: block;
+      margin: auto;
+      max-width: 100%;
+    }
+    #result {
+      display: none;
+      margin: auto;
+      background: url('paper.png');
+    }
+    #result img {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <div class="form">
+      <input id="input" type="text"><button id="write" type="button">書く</button>
+    </div>
+    <img id="loading" src="loading.png">
+    <div id="result"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script>
+    var $loading = $('#loading');
+    var $result = $('#result');
+
+    var loadImage = function(s) {
+      $result.hide();
+      $loading.show();
+
+      $.getJSON('https://l0fntiio33.execute-api.us-east-1.amazonaws.com/prod/kaisho/' + encodeURI(s), function(data) {
+        $result.html('<img src="' + data.url + '">');
+        $loading.hide();
+        $result.show();
+      });
+    };
+
+    var hash = function() {
+      return decodeURI(location.hash.substring(2)) || '楷書';
+    };
+
+    window.addEventListener("hashchange", function() {
+      loadImage(hash());
+    }, false);
+
+    loadImage(hash());
+
+    $('#write').click(function() {
+      location.href = '#/' + $('#input').val();
+    });
+  </script>
+</body>
+</html>
